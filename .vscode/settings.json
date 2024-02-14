@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "gpio.h": "c",
+        "seeed_xiao_rp2040.h": "c",
+        "pio_usb.h": "c",
+        "stdlib.h": "c",
+        "multicore.h": "c"
+    }
+}
