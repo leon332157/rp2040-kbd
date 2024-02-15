@@ -23,6 +23,7 @@ void core1_main() {
 
   // To run USB SOF interrupt in core1, create alarm pool in core1.  
   static pio_usb_configuration_t config = PIO_USB_DEFAULT_CONFIG;
+  config.pinout = PIO_USB_PINOUT_DMDP;
   config.alarm_pool = (void*)alarm_pool_create(2, 1);
   usb_device = pio_usb_host_init(&config);
 
@@ -65,7 +66,7 @@ int main() {
       for (int dev_idx = 0; dev_idx < PIO_USB_DEVICE_CNT; dev_idx++) {
         usb_device_t *device = &usb_device[dev_idx];
         if (!device->connected) {
-          flash_LED(LED_R,40);
+          flash_LED(LED_R,30);
           //printf("dev not connected\n");
           continue;
         }

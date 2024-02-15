@@ -1,3 +1,0 @@
-/home/leon3/rp2040-kbd/build/pioasm/CMakeFiles/pioasm.dir
-/home/leon3/rp2040-kbd/build/pioasm/CMakeFiles/edit_cache.dir
-/home/leon3/rp2040-kbd/build/pioasm/CMakeFiles/rebuild_cache.dir
