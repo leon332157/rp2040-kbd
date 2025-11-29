@@ -19,11 +19,11 @@ const uint LED_PINS[] = {LED_R, LED_G, LED_B};
 static usb_device_t *usb_device = NULL;
 
 void core1_main() {
-  sleep_ms(10);
+  //sleep_ms(10);
 
   // To run USB SOF interrupt in core1, create alarm pool in core1.  
   static pio_usb_configuration_t config = PIO_USB_DEFAULT_CONFIG;
-  config.pinout = PIO_USB_PINOUT_DMDP;
+  //config.pinout = PIO_USB_PINOUT_DMDP;
   config.alarm_pool = (void*)alarm_pool_create(2, 1);
   usb_device = pio_usb_host_init(&config);
 
@@ -36,7 +36,7 @@ void core1_main() {
   }
 }
 
-void flash_LED(unsigned int pin,unsigned int length_ms) {
+static void flash_LED(unsigned int pin,unsigned int length_ms) {
   gpio_put(pin,0);
   sleep_ms(length_ms);
   gpio_put(pin,1);
@@ -44,29 +44,39 @@ void flash_LED(unsigned int pin,unsigned int length_ms) {
   return;
 }
 
+void parse_ascii(uint8_t byte) {
+  uint8_t inp = 0;
+  inp = byte+93;
+  if (inp>122 || inp < 97) {
+    printf("input: <invalid>\n");
+    return;
+  }
+  printf("input: %c\n",inp);
+}
+
 int main() {
   // default 125MHz is not appropreate. Sysclock should be multiple of 12MHz.
   set_sys_clock_khz(120000, true);
-
+  sleep_ms(3000);
   stdio_init_all();
   printf("hello!");
 
+  multicore_reset_core1();
+  // all USB task run in core1
+  multicore_launch_core1(core1_main);
   for (unsigned short int i = 0; i < 3; i++) {
     gpio_init(LED_PINS[i]);
     gpio_set_dir(LED_PINS[i], GPIO_OUT);
     gpio_put(LED_PINS[i],1); // turn all lights off
   }
 
-  multicore_reset_core1();
-  // all USB task run in core1
-  multicore_launch_core1(core1_main);
 
   while (true) {
     if (usb_device != NULL) {
       for (int dev_idx = 0; dev_idx < PIO_USB_DEVICE_CNT; dev_idx++) {
         usb_device_t *device = &usb_device[dev_idx];
         if (!device->connected) {
-          flash_LED(LED_R,30);
+          //flash_LED(LED_R,30);
           //printf("dev not connected\n");
           continue;
         }
@@ -89,7 +99,9 @@ int main() {
             for (int i = 0; i < len; i++) {
               printf("%02x ", temp[i]);
             }
+            
             printf("\n");
+            //parse_ascii(temp[2]);
           }
           else {
             flash_LED(LED_B,1);

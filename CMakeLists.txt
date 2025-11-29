@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 set(PICO_BOARD seeed_xiao_rp2040)
 include(pico_sdk_import.cmake)
-
+set(PICO_DEOPTIMIZED_DEBUG 0)
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
 project(test_project C CXX ASM)
 
 set(target_name "usb-kbd")
@@ -11,6 +12,7 @@ pico_sdk_init()
 add_executable(${target_name}
   ${target_name}.c
 )
+pico_add_extra_outputs(${target_name})
 set(PICO_PIO_USB_DIR "${CMAKE_CURRENT_LIST_DIR}/Pico-PIO-USB/")
 add_subdirectory(${PICO_PIO_USB_DIR} pico_pio_usb)
 
